@@ -8,7 +8,7 @@ module.exports = async (
   interaction,
   env,
   now,
-  { sendError, sendInformation, sendSuccess }
+  { error, information, success }
 ) => {
   let name = interaction.options.getString("name", true);
   let brackets = interaction.options.getString("brackets", true);
@@ -32,7 +32,9 @@ module.exports = async (
 
   if (bio) {
     if (bio.length >= 4096)
-      return sendError("Biography length must be inferior to 4096 characters.");
+      return interaction.editReply(
+        error("Biography length must be inferior to 4096 characters.")
+      );
     object.bio = bio;
   }
 
@@ -44,9 +46,12 @@ module.exports = async (
   );
 
   if (!result.acknowledged)
-    return sendError("We couldn't register your character, an error occured.");
+    return interaction.editReply(
+      error("We couldn't register your character, an error occured.")
+    );
 
-  sendSuccess(`${object.name} finally has been made !`);
+  interaction.editReply(success(`${object.name} finally has been made !`));
+
   interaction.channel.send({
     embeds: [
       {
