@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "mongodb": "^6.3.0"
+  },
+  "name": "beeplay-discord",
+  "description": "BeePlay is a Discord Bot made by KinyaDev. It is meant to help creating Roleplay Discord servers with customizable features and utilies for traditional roleplay, that means that BeePlay will help you automatize your Roleplay Server in Discord.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.55.0"
+  }
+}
