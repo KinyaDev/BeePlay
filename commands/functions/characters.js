@@ -34,12 +34,10 @@ module.exports = async (
   let charas = await charaapi.list();
 
   if (charas.length === 0)
-    return interaction.editReply(
-      error("The user provided doesn't have registered characters")
-    );
+    return interaction.editReply(error("Couldn't find any characters"));
 
   let firstEmbed = await makeEmbed((await charaapi.first())._id);
-  let msg = await interaction.editReply({ embeds: [firstEmbed] });
+  let msg = await interaction.channel.send({ embeds: [firstEmbed] });
 
   async function updateEmbed(charaId) {
     try {

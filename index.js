@@ -67,7 +67,7 @@ client.on("interactionCreate", async (interaction) => {
   let commandFunctionsPath = path.join(__dirname, "commands", "functions");
   let commandFunctionsFiles = readdirSync(commandFunctionsPath, "utf-8");
 
-  let now = Date.now();
+  const now = Date.now();
   registeredCommands.forEach(async (command) => {
     if (command.name === interaction.commandName) {
       try {
@@ -76,19 +76,20 @@ client.on("interactionCreate", async (interaction) => {
           `${command.name}.js`
         ));
 
-        if (typeof runner !== "function")
-          throw Error("Runner must be a function.");
+        if (typeof runner !== "function") throw "Runner must be a function.";
 
         await interaction.deferReply({ fetchReply: true, ephemeral: true });
 
         await runner(interaction, require("./utils/env"), now, {
           error: (text) => {
             return {
+              content: null,
               embeds: [{ title: `:x: ${text}`, color: 0xf44336 }],
             };
           },
           success: (text) => {
             return {
+              content: null,
               embeds: [
                 { title: `:white_check_mark: ${text}`, color: 0x8fce00 },
               ],
@@ -96,6 +97,7 @@ client.on("interactionCreate", async (interaction) => {
           },
           information: (text) => {
             return {
+              content: null,
               embeds: [
                 { title: `:information_source: ${text}`, color: 0xf4d03f },
               ],

@@ -64,7 +64,6 @@ class CharacterManager {
       wh = await channel.createWebhook({
         name: "BeePlay Character",
         avatar:
-          chara.icon ||
           "https://t3.ftcdn.net/jpg/02/11/82/46/360_F_211824632_UGp8XQ8OYqBnoPJ2QXH5BCqYbAxqvK9F.jpg",
       });
 

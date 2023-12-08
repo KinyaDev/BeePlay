@@ -2,7 +2,6 @@ const { Message } = require("discord.js");
 const { CharacterManager } = require("../utils/db");
 
 /**
- *
  * @param {Message} message
  */
 module.exports = async (message) => {
@@ -13,19 +12,17 @@ module.exports = async (message) => {
 
   for (let character of await charaManager.list()) {
     let splittedBrackets = character.brackets.split("text");
+
     if (
-      !(
-        message.content.startsWith(splittedBrackets[0]) &&
-        message.content.endsWith(splittedBrackets[1])
-      )
-    )
-      return;
+      message.content.startsWith(splittedBrackets[0]) &&
+      message.content.endsWith(splittedBrackets[1])
+    ) {
+      let parsedMsg = message.content
+        .replace(new RegExp(`^${splittedBrackets[0]}`, "g"), "")
+        .replace(new RegExp(`${splittedBrackets[1]}$`, "g"), "");
 
-    let parsedMsg = message.content
-      .replace(new RegExp(`^${splittedBrackets[0]}`, "g"), "")
-      .replace(new RegExp(`${splittedBrackets[1]}$`, "g"), "");
-
-    message.delete();
-    charaManager.send(character._id, parsedMsg, message.channel);
+      message.delete();
+      charaManager.send(character._id, parsedMsg, message.channel);
+    }
   }
 };

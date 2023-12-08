@@ -19,12 +19,15 @@ module.exports = async (
     });
 
     let charaId = await selector(interaction, interaction.user.id);
+
     let charaapi = new CharacterManager(interaction.user.id);
     let chara = await charaapi.get(charaId);
 
     charaapi.unregister(charaId);
 
-    sendSuccess(`${chara.name} has been successfully deleted!`);
+    interaction.editReply(
+      success(`${chara.name} has been successfully deleted!`)
+    );
   } catch {
     interaction.editReply(error("Couldn't find any character..."));
   }
