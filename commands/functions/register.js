@@ -20,7 +20,9 @@ async function exec(interaction, { error, env, now, information, success }) {
         avatar.contentType === "image/gif"
       )
     )
-      return sendError(`Image must be type PNG, JPEG or GIF !`);
+      return interaction.editReply(
+        error(`Image must be type PNG, JPEG or GIF !`)
+      );
 
     object.icon = avatar.url;
   }

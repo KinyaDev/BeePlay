@@ -29,7 +29,7 @@ function selector(interaction, userId) {
 
     if (selectmenu.options.length === 0) return reject("no-chara");
 
-    let msg = await interaction.channel.send({
+    let msg = await interaction.editReply({
       components: [new ActionRowBuilder().setComponents(selectmenu)],
     });
 
@@ -40,7 +40,9 @@ function selector(interaction, userId) {
     collector.on("collect", (i) => {
       resolve(new ObjectId(i.values[0]));
       collector.stop();
-      msg.delete();
+      interaction.editReply({
+        components: [],
+      });
     });
   });
 }

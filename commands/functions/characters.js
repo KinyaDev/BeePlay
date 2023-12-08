@@ -9,7 +9,7 @@ const selector = require("../../utils/selector");
 async function exec(interaction, { error, env, now, information, success }) {
   let user = interaction.options.getUser("mention") || interaction.user;
   let charaapi = new CharacterManager(user.id);
-
+  interaction.editReply({ content: "Select a character" });
   async function makeEmbed(_id) {
     let chara = await charaapi.get(_id);
     console.log(chara);

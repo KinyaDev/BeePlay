@@ -4,24 +4,33 @@
 
 ## What is BeePlay?
 
-BeePlay stands as a creation by KinyaDev, serving the purpose of facilitating the establishment of Roleplay Discord servers with customizable features and utilities geared towards traditional roleplay. In essence, BeePlay streamlines the management of your Discord Roleplay Server.
+BeePlay is a utility discord bot meant to help you customize and automatize your roleplay servers, it offers character management and fake user profiles, stats, species, travel system by setupping roleplay channels, and way more!
 
 ## Features
 
-**Character Management and Customization**
-Effortlessly manage and utilize your characters with these features:
+### Character Management, Customization & Interaction
 
-- `/characters` displays a list of your characters with a selectable menu for easily switching between them.
-- `/register` allows you to register a character, providing details such as name, icon, brackets, biography, and illustration.
+- `/characters`
+  Displays a list of your characters with a selectable menu for easily switching between them.
 
-Express your character's dialogue using custom brackets and text, akin to the functionality of Tupperbox Box. For instance, setting the brackets as `c!text` enables you to make your character speak with a unique user profile by sending messages like `c!Hello World` in a roleplay channel.
+- `/register`
+  Allows you to register a character, providing details such as name, icon, brackets, biography, and illustration.
 
-- `/unregister [character]` enables the deletion of a character from the database, ensuring privacy for both you and the server.
+![Register Command Demo]()
 
-**Roleplay Channels & Travel System Based on View Channel Permissions**
+You can make speak your character in a text channel in the same manner as the Tupperbox bot, with the brackets you gave to your character. Send a message by replacing "text" of the brackets by any text to make speak your character through a fake user profile. For instance, if your character has `c!text` brackets, then send `c!Hello World`.
+
+- `/unregister`
+  A select menu appear to delete the selected character
+
+### Roleplay System
+
 Establish roleplay channels and connect them with a travel system based on channel permissions. No direct access to a sky island from the desert; travel to the mountain first!
 
 - `/travel` displays a menu based on the roleplay channel you're in, allowing you to travel to other channels. It hides irrelevant roleplay channels and highlights the target channel.
+
+**Tell which channels are roleplay ones**
+
 - `/roleplay channels set [mention channels]`
 - `/roleplay channels add [mention channels]`
 - `/roleplay channels remove [mention channels]`

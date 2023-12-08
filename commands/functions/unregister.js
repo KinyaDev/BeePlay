@@ -23,6 +23,8 @@ async function exec(interaction, { error, env, now, information, success }) {
     interaction.editReply(
       success(`${chara.name} has been successfully deleted!`)
     );
+
+    interaction.editReply({ components: [] });
   } catch {
     interaction.editReply(error("Couldn't find any character..."));
   }
