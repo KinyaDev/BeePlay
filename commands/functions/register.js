@@ -4,12 +4,7 @@ let { Player, CharacterManager } = require("../../utils/db");
  *
  * @param {ChatInputCommandInteraction} interaction
  */
-module.exports = async (
-  interaction,
-  env,
-  now,
-  { error, information, success }
-) => {
+async function exec(interaction, { error, env, now, information, success }) {
   let name = interaction.options.getString("name", true);
   let brackets = interaction.options.getString("brackets", true);
   let bio = interaction.options.getString("bio");
@@ -60,8 +55,10 @@ module.exports = async (
           icon_url: interaction.user.displayAvatarURL(),
         },
         title: `${object.name}`,
-        thumbnail: { url: object.icon },
-        description: object.bio || undefined,
+        thumbnail: {
+          url: object.icon || interaction.client.user.displayAvatarURL(),
+        },
+        description: object.bio || "*no biography set*",
         fields: [
           {
             name: "Brackets",
@@ -72,4 +69,6 @@ module.exports = async (
       },
     ],
   });
-};
+}
+
+module.exports = exec;

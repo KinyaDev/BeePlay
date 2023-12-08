@@ -80,7 +80,9 @@ client.on("interactionCreate", async (interaction) => {
 
         await interaction.deferReply({ fetchReply: true, ephemeral: true });
 
-        await runner(interaction, require("./utils/env"), now, {
+        await runner(interaction, {
+          now,
+          env: require("./utils/env"),
           error: (text) => {
             return {
               content: null,

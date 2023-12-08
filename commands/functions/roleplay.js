@@ -6,10 +6,8 @@ const selector = require("../../utils/channelSelector");
  * The exec command for the /roleplay command
  *
  * @param {ChatInputCommandInteraction} interaction
- * @param {process.env} env
- * @param {Date} now
  */
-async function exec(interaction, env, now, { error, information, success }) {
+async function exec(interaction, { error, env, now, information, success }) {
   const rpapi = new RoleplayManager(interaction.guildId);
   const subCommandGroup = interaction.options.getSubcommandGroup();
 

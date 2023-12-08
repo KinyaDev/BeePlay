@@ -6,26 +6,19 @@ const selector = require("../../utils/selector");
  *
  * @param {ChatInputCommandInteraction} interaction
  */
-module.exports = async (
-  interaction,
-  env,
-  now,
-  { error, information, success }
-) => {
+async function exec(interaction, { error, env, now, information, success }) {
   let user = interaction.options.getUser("mention") || interaction.user;
   let charaapi = new CharacterManager(user.id);
 
   async function makeEmbed(_id) {
     let chara = await charaapi.get(_id);
+    console.log(chara);
     let embed = new EmbedBuilder()
       .setAuthor({ name: user.username, iconURL: user.displayAvatarURL() })
       .setTitle(chara.name)
       .setDescription(chara.bio || "*no biography set*")
       .setFields({ name: "Brackets", value: chara.brackets })
-      .setThumbnail(
-        chara.icon ||
-          "https://t3.ftcdn.net/jpg/02/11/82/46/360_F_211824632_UGp8XQ8OYqBnoPJ2QXH5BCqYbAxqvK9F.jpg"
-      )
+      .setThumbnail(chara.icon || interaction.client.user.displayAvatarURL())
       .setColor(0xf4d03f);
 
     return embed;
@@ -41,18 +34,24 @@ module.exports = async (
 
   async function updateEmbed(charaId) {
     try {
-      await selector(interaction, user.id).then(updateEmbed);
-
       let updatedEmbed = await makeEmbed(charaId);
+      if (!msg.editable) return;
+
       msg.edit({ embeds: [updatedEmbed] });
+
+      let charaId2 = await selector(interaction, user.id);
+      await updateEmbed(charaId2);
     } catch {
       interaction.editReply(error("Couldn't find any characters"));
     }
   }
 
   try {
-    await selector(interaction, user.id).then(updateEmbed);
+    let charaId = await selector(interaction, user.id);
+    await updateEmbed(charaId);
   } catch {
     interaction.editReply(error("Couldn't find any characters"));
   }
-};
+}
+
+module.exports = exec;

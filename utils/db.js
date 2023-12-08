@@ -40,7 +40,7 @@ class CharacterManager {
     characters.deleteOne({ userId: this.userId, _id });
   }
   async get(_id) {
-    return await characters.findOne({ userId: this.userId });
+    return await characters.findOne({ userId: this.userId, _id });
   }
   async list() {
     return await characters.find({ userId: this.userId }).toArray();
@@ -63,15 +63,12 @@ class CharacterManager {
     if (!wh)
       wh = await channel.createWebhook({
         name: "BeePlay Character",
-        avatar:
-          "https://t3.ftcdn.net/jpg/02/11/82/46/360_F_211824632_UGp8XQ8OYqBnoPJ2QXH5BCqYbAxqvK9F.jpg",
+        avatar: channel.client.user.displayAvatarURL(),
       });
 
     wh.send({
       username: chara.name,
-      avatarURL:
-        chara.icon ||
-        "https://t3.ftcdn.net/jpg/02/11/82/46/360_F_211824632_UGp8XQ8OYqBnoPJ2QXH5BCqYbAxqvK9F.jpg",
+      avatarURL: chara.icon || channel.client.user.displayAvatarURL(),
       content,
     });
   }
@@ -82,28 +79,31 @@ class RoleplayManager {
     this.guildId = guildId;
   }
 
-  addChannels(...channelIds) {
+  addChannels(channelIds) {
     for (let id of channelIds) {
       guilds.insertOne({ guildId: this.guildId, type: "rp", channelId: id });
     }
   }
 
-  removeChannels(...channelIds) {
+  removeChannels(channelIds) {
     for (let id of channelIds) {
       guilds.deleteOne({ guildId: this.guildId, type: "rp", channelId: id });
     }
   }
 
-  setChannels(...channelIds) {
+  setChannels(channelIds) {
     guilds.deleteMany({ guildId: this.guildId, type: "rp" });
     this.addChannels(channelIds);
   }
 
   async getChannels() {
-    return await guilds.find({ guildId: this.guildId, type: "rp" }).toArray();
+    let data = await guilds
+      .find({ guildId: this.guildId, type: "rp" })
+      .toArray();
+    return data.map((d) => d.channelId);
   }
 
-  async linkChannels(channelId, ...channelIds) {
+  async linkChannels(channelId, channelIds) {
     let links = await this.getLinkChannel(channelId);
     if (links.length === 0) {
       guilds.insertOne({

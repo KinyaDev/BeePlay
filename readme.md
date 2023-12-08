@@ -25,8 +25,6 @@ Establish roleplay channels and connect them with a travel system based on chann
 - `/roleplay channels set [mention channels]`
 - `/roleplay channels add [mention channels]`
 - `/roleplay channels remove [mention channels]`
-- `/roleplay channels link [mention channel] [mention channels]`
-- `/roleplay channels unlink [mention channel]` presents options to delete the main roleplay channel with linked channels or unlink specific channels.
 
 ## Todolist
 
@@ -37,3 +35,8 @@ Introduce a species system, complete with species addition, detailed description
 
 **Stats System**
 Establish comprehensive statistics such as health, attack damages, resistance, etc., tailored to your guild.
+
+**Link rolepkay channels System**
+
+- `/roleplay channels link [mention channel] [mention channels]`
+- `/roleplay channels unlink [mention channel]` presents options to delete the main roleplay channel with linked channels or unlink specific channels.

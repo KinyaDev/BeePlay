@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
 
 module.exports = new SlashCommandBuilder()
   .setDescription("Customise your roleplay")
@@ -48,4 +48,5 @@ module.exports = new SlashCommandBuilder()
               .setRequired(true)
           )
       )
-  );
+  )
+  .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator);

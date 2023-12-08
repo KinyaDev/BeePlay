@@ -27,7 +27,6 @@ function selector(interaction, doLink, channelId) {
       if (!channel) return;
       selectmenu.addOptions({
         label: channel.name,
-        emoji: "#",
         value: channel.id,
       });
     }
@@ -42,8 +41,8 @@ function selector(interaction, doLink, channelId) {
       filter: (i) => i.user.id === interaction.user.id,
     });
 
-    collector.on("collect", (i) => {
-      resolve(new ObjectId(i.values[0]));
+    collector.on("collect", async (i) => {
+      resolve(await interaction.guild.channels.fetch(i.values[0]));
       collector.stop();
       msg.delete();
     });

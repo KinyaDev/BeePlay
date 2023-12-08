@@ -6,12 +6,7 @@ const selector = require("../../utils/selector");
  *
  * @param {ChatInputCommandInteraction} interaction
  */
-module.exports = async (
-  interaction,
-  env,
-  now,
-  { error, information, success }
-) => {
+async function exec(interaction, { error, env, now, information, success }) {
   try {
     interaction.editReply({
       ephemeral: true,
@@ -31,4 +26,6 @@ module.exports = async (
   } catch {
     interaction.editReply(error("Couldn't find any character..."));
   }
-};
+}
+
+module.exports = exec;
