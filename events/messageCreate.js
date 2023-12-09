@@ -1,12 +1,50 @@
 const { Message } = require("discord.js");
-const { CharacterManager } = require("../utils/db");
-
+const { CharacterManager, NPCManager } = require("../utils/db");
+const { default: OpenAI } = require("openai");
+const env = require("../utils/env");
+let aiClient = new OpenAI({
+  apiKey: env.OPENAI_TOKEN,
+  organization: env.OPENAI_ORGA,
+});
 /**
  * @param {Message} message
  */
 module.exports = async (message) => {
-  if (message.author.bot) return;
   if (message.channel.isDMBased()) return;
+
+  let npcapi = new NPCManager(message.guild.id);
+  let npclist = await npcapi.list();
+
+  for (let npc of npclist) {
+    if (
+      npc.channelId === message.channel.id &&
+      message.mentions.parsedUsers.find(
+        (u) => u.id === message.client.user.id
+      ) &&
+      npc.name !== message.author.username &&
+      message.author.bot
+    ) {
+      npcapi.insertMessage(
+        npc._id,
+        "user",
+        `You got a message from ${message.author.username} saying "${message.content}", please respond`
+      );
+
+      let messageList = await npcapi.getMessages(npc._id);
+
+      let response = await aiClient.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: messageList,
+      });
+
+      let msg = response.choices[0].message;
+      npcapi.insertMessage(npc._id, "assistant", msg.content);
+
+      npcapi.webhookSend(npc._id, msg.content, message.channel);
+    }
+  }
+
+  if (message.author.bot) return;
 
   let charaManager = new CharacterManager(message.author.id);
 

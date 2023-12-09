@@ -10,14 +10,9 @@ client.connect().then(() => {
 let db = client.db("beeplay");
 let characters = db.collection("characters");
 let guilds = db.collection("guilds");
-
-class Player {
-  constructor(userId) {
-    this.userId = userId;
-  }
-
-  characters = new CharacterManager(this.userId);
-}
+let premium = db.collection("premium");
+let npcs = db.collection("npcs");
+let npcmessages = db.collection("npc_messages");
 
 class CharacterManager {
   constructor(userId) {
@@ -163,9 +158,113 @@ class RoleplayManager {
   }
 }
 
+class PremiumManager {
+  constructor(guildId) {
+    this.guildId = guildId;
+  }
+
+  togglePremium() {
+    if (this.get()) {
+      premium.deleteOne({ guildId: this.guildId });
+    } else premium.insertOne({ guildId: this.guildId });
+  }
+
+  async get() {
+    let data = await premium.findOne({ guildId: this.guildId });
+
+    return data;
+  }
+
+  async hasPremium() {
+    return !!(await this.get());
+  }
+}
+
+class NPCManager {
+  constructor(guildId) {
+    this.guildId = guildId;
+  }
+
+  async register(channelId, name, icon, prompt) {
+    let result = await npcs.insertOne({
+      guildId: this.guildId,
+      channelId,
+      name,
+      icon,
+      prompt,
+    });
+
+    return result;
+  }
+
+  async list(channelId) {
+    if (channelId)
+      return await npcs.find({ guildId: this.guildId, channelId }).toArray();
+
+    return await npcs.find({ guildId: this.guildId }).toArray();
+  }
+
+  async unregister(_id) {
+    let result = await npcs.deleteOne({ guildId: this.guildId, _id });
+
+    return result;
+  }
+
+  async get(_id) {
+    return await npcs.findOne({ guildId: this.guildId, _id });
+  }
+
+  async startNPC(_id, channelName) {
+    let npcData = await this.get(_id);
+    let parsedSystem = `You are now an NPC in a roleplay discussion and you live in/at ${channelName}. You can't change places unless the place you want to get to is literally where you live.
+    Your name is ${npcData.data} and here is your lore with all information:\n${npcData.prompt}`;
+
+    npcmessages.insertOne({
+      npcId: _id,
+      role: "system",
+      content: parsedSystem,
+    });
+  }
+
+  async insertMessage(_id, role, parsedContent) {
+    npcmessages.insertOne({ npcId: _id, role, content: parsedContent });
+  }
+
+  async getMessages(_id) {
+    return await npcmessages.find({ npcId: _id }).toArray();
+  }
+
+  async clearMessage(_id) {
+    await npcmessages.deleteMany({ guildId: this.guildId, npcId: _id });
+  }
+
+  /**
+   *
+   * @param {string} content
+   * @param {TextChannel} channel
+   */
+  async webhookSend(_id, content, channel) {
+    const webhooks = await channel.fetchWebhooks();
+
+    let wh = webhooks.find((w) => w.owner.id === channel.client.user.id);
+    let chara = await this.get(_id);
+    if (!wh)
+      wh = await channel.createWebhook({
+        name: "BeePlay Character",
+        avatar: channel.client.user.displayAvatarURL(),
+      });
+
+    wh.send({
+      username: chara.name,
+      avatarURL: chara.icon || channel.client.user.displayAvatarURL(),
+      content,
+    });
+  }
+}
+
 module.exports = {
   CharacterManager,
-  characters,
-  Player,
   RoleplayManager,
+  PremiumManager,
+  NPCManager,
 };

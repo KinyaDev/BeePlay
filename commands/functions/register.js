@@ -1,5 +1,5 @@
 const { ChatInputCommandInteraction } = require("discord.js");
-let { Player, CharacterManager } = require("../../utils/db");
+let { CharacterManager } = require("../../utils/db");
 /**
  *
  * @param {ChatInputCommandInteraction} interaction
