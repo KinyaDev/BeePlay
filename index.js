@@ -5,6 +5,7 @@ const {
   Events,
   GatewayIntentBits,
   Partials,
+  ActivityType,
 } = require("discord.js");
 
 const { readdirSync } = require("fs");
@@ -59,7 +60,31 @@ async function reloadCommands(readyClient) {
 client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 
+  readyClient.user.setActivity({
+    type: ActivityType.Playing,
+    name: `Managing roleplay in ${await readyClient.guilds
+      .fetch()
+      .then((g) => g.size)} guilds`,
+  });
   reloadCommands(readyClient);
+});
+
+client.on("guildCreate", async (guild) => {
+  readyClient.user.setActivity({
+    type: ActivityType.Playing,
+    name: `Managing roleplay in ${await client.guilds
+      .fetch()
+      .then((g) => g.size)} guilds`,
+  });
+});
+
+client.on("guildDelete", async (guild) => {
+  readyClient.user.setActivity({
+    type: ActivityType.Playing,
+    name: `Managing roleplay in ${await client.guilds
+      .fetch()
+      .then((g) => g.size)} guilds`,
+  });
 });
 
 client.on("interactionCreate", async (interaction) => {
