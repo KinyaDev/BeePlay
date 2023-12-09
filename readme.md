@@ -38,6 +38,9 @@ Establish roleplay channels and connect them with a travel system based on chann
 
 - `/travel` displays a menu based on the roleplay channel you're in, allowing you to travel to other channels. It hides irrelevant roleplay channels and highlights the target channel.
 
+  ![](https://i.imgur.com/gQtZkB2.png)
+  ![](https://i.imgur.com/lFgCKM3.png)
+
 **Tell which channels are roleplay ones**
 
 - `/roleplay channels set [mention channels]`

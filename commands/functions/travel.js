@@ -30,7 +30,7 @@ async function exec(interaction, { env, now, error, information }) {
     let targetChannel = await channelSelector(
       interaction,
       true,
-      interaction.channelId
+      interaction.channel.id
     );
 
     for (let otherRoleplayChannel of channels) {
