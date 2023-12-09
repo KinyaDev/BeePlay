@@ -122,6 +122,8 @@ class RoleplayManager {
         { guildId: this.guildId, type: "link", channelId: channelId },
         { $set: { channelIds: links } }
       );
+
+      return links;
     }
   }
 
@@ -145,6 +147,8 @@ class RoleplayManager {
         channelId: channelId1,
       });
     }
+
+    return links;
   }
 
   async getLinkChannel(channelId) {

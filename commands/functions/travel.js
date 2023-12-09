@@ -21,10 +21,17 @@ async function exec(interaction, { env, now, error, information }) {
     channels.push(await interaction.guild.channels.fetch(channelId));
   }
 
+  if (!channelIds.includes(interaction.channelId))
+    return interaction.editReply(error("You are not in a roleplay channel!"));
+
   await interaction.editReply(information("Select a place to travel to!"));
 
   try {
-    let targetChannel = await channelSelector(interaction, false);
+    let targetChannel = await channelSelector(
+      interaction,
+      true,
+      interaction.channelId
+    );
 
     for (let otherRoleplayChannel of channels) {
       if (otherRoleplayChannel instanceof GuildChannel) {

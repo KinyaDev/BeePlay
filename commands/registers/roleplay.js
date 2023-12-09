@@ -48,5 +48,50 @@ module.exports = new SlashCommandBuilder()
               .setRequired(true)
           )
       )
+      .addSubcommand((opt) =>
+        opt
+          .setName("link-list")
+          .setDescription(
+            "Get the list of all main place channels and the places linked to"
+          )
+      )
+      .addSubcommand((opt) =>
+        opt
+          .setName("link")
+          .setDescription(
+            "Link roleplay channels each others for the travel command"
+          )
+          .addStringOption((opt) =>
+            opt
+              .setName("channel")
+              .setDescription(
+                "Mentionned channel, main channel to link others to"
+              )
+              .setRequired(true)
+          )
+          .addStringOption((opt) =>
+            opt
+              .setName("channels")
+              .setDescription(
+                "Mentionned channels to make accessible in the main channel"
+              )
+              .setRequired(true)
+          )
+      )
+      .addSubcommand((opt) =>
+        opt
+          .setName("unlink")
+          .setDescription(
+            "Unlink roleplay channels each others for the travel command"
+          )
+          .addStringOption((opt) =>
+            opt
+              .setName("channel")
+              .setDescription(
+                "Mentionned channel, main channel to unlink others to"
+              )
+              .setRequired(true)
+          )
+      )
   )
   .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator);
