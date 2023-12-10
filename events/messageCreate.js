@@ -18,37 +18,40 @@ module.exports = async (message) => {
   for (let npc of npclist) {
     if (
       npc.channelId === message.channel.id &&
-      message.mentions.parsedUsers.find(
-        (u) => u.id === message.client.user.id
-      ) &&
       npc.name !== message.author.username &&
       message.author.bot
     ) {
       try {
         let messageList = await npcapi.getMessages(npc._id);
 
+        let npcMsg = `${message.author.username}: "${message.content}". Say only "no-action" if ${message.author.username} isn't talking to you. Write directly your message without comments and you don't have to assist him/her`;
         messageList.push({
           npcId: npc._id,
           role: "user",
-          content: `You got a message from ${message.author.username} saying "${message.content}", please respond`,
+          content: npcMsg,
         });
+
+        let parsedMessages = [];
+
+        for (let msg of messageList) {
+          parsedMessages.push({ role: msg.role, content: msg.content });
+        }
 
         let response = await aiClient.chat.completions.create({
           model: "gpt-3.5-turbo",
-          messages: messageList,
+          messages: parsedMessages,
         });
 
         let msg = response.choices[0].message;
 
-        npcapi.insertMessage(
-          npc._id,
-          "user",
-          `You got a message from ${message.author.username} saying "${message.content}", please respond`
-        );
+        if (msg.content === "no-action") return;
+
+        npcapi.insertMessage(npc._id, "user", npcMsg);
 
         npcapi.insertMessage(npc._id, "assistant", msg.content);
         npcapi.webhookSend(npc._id, msg.content, message.channel);
-      } catch {
+      } catch (e) {
+        console.error(e);
         message.reply(
           `Ah!! Sorry... We don't have enough money or a a bank account setup for the moment to use the AI Service. Please try later. `
         );

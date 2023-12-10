@@ -2,6 +2,7 @@ const {
   ChatInputCommandInteraction,
   StringSelectMenuBuilder,
   ActionRowBuilder,
+  EmbedBuilder,
 } = require("discord.js");
 let { PremiumManager, NPCManager } = require("../../utils/db");
 const { ObjectId } = require("mongodb");
@@ -58,6 +59,7 @@ async function exec(interaction, { error, env, now, information, success }) {
       );
 
       let npc = await npcapi.get(insertedId);
+      console.log(npc, insertedId);
 
       interaction.editReply(success(`${npc.name} is now live in ${channel}!`));
       npcapi.startNPC(npc._id, channel.name);
@@ -96,12 +98,28 @@ async function exec(interaction, { error, env, now, information, success }) {
         interaction.editReply({ components: [] });
 
         npcapi.unregister(_id);
+        npcapi.clearMessage(_id);
       });
       break;
     }
 
     case "list": {
-      let channel = interaction.options.getChannel("channel");
+      let npclist = await npcapi.list();
+      let embeds = [];
+
+      for (let npc of npclist) {
+        embeds.push(
+          new EmbedBuilder()
+            .setTitle(npc.name)
+            .setThumbnail(
+              npc.icon || interaction.client.user.displayAvatarURL()
+            )
+            .setDescription(npc.prompt)
+            .setFields({ name: "Channel", value: `<#${npc.channelId}>` })
+        );
+      }
+
+      interaction.channel.send({ content: `# NPCs`, embeds });
       break;
     }
   }

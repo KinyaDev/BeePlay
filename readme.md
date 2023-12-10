@@ -8,6 +8,20 @@ BeePlay is a utility discord bot meant to help you customize and automatize your
 
 ## Features
 
+### Custom AI NPCs (PREMIUM)
+
+- `npc list` - get the list of all NPCs
+- `npc create` creates a npc that will live in the specified channel with a give name, avatar and prompt.
+
+![](https://i.imgur.com/pHoDjz4.png)
+![](https://i.imgur.com/e0JVb3D.png)
+
+- `npc delete`
+
+![](https://i.imgur.com/u3yWOLN.png)
+
+Please note that the NPC will only be triggered by your character, not a real user, so it may causes issues if there is more than 2 NPCs in the channel and might spend a lot of money, I need time and efforts to optimize it.
+
 ### Character Management, Customization & Interaction
 
 - `/register`
@@ -81,8 +95,6 @@ Establish roleplay channels and connect them with a travel system based on chann
   ![](https://i.imgur.com/vh3zKJD.png)
 
 ## Todolist
-
-- [PREMIUM] Custom AI NPC
 
 - **Species System**
   Introduce a species system, complete with species addition, detailed descriptions, and illustrations. Enable players to create characters with custom species, each with unique base stats.

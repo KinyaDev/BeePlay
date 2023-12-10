@@ -228,8 +228,8 @@ class NPCManager {
 
   async startNPC(_id, channelName) {
     let npcData = await this.get(_id);
-    let parsedSystem = `You are now an NPC in a roleplay discussion and you live in/at ${channelName}. You can't change places unless the place you want to get to is literally where you live.
-    Your name is ${npcData.data} and here is your lore with all information:\n${npcData.prompt}`;
+    let parsedSystem = `You are now an NPC in a roleplay discussion residing in ${channelName}. Movement is restricted to your current location.
+    Your name is ${npcData.name}. Here's your lore:\n${npcData.prompt}`;
 
     npcmessages.insertOne({
       npcId: _id,
@@ -247,7 +247,7 @@ class NPCManager {
   }
 
   async clearMessage(_id) {
-    await npcmessages.deleteMany({ guildId: this.guildId, npcId: _id });
+    await npcmessages.deleteMany({ npcId: _id });
   }
 
   /**

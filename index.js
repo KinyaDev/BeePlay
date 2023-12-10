@@ -16,7 +16,12 @@ const express = require("express");
 const app = express();
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, "MessageContent", "GuildMessages"],
+  intents: [
+    GatewayIntentBits.Guilds,
+    "MessageContent",
+    "GuildMessages",
+    GatewayIntentBits.GuildVoiceStates,
+  ],
   partials: [Partials.Message, Partials.GuildMember, Partials.Channel],
 });
 
