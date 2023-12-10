@@ -24,23 +24,35 @@ module.exports = async (message) => {
       npc.name !== message.author.username &&
       message.author.bot
     ) {
-      npcapi.insertMessage(
-        npc._id,
-        "user",
-        `You got a message from ${message.author.username} saying "${message.content}", please respond`
-      );
+      try {
+        let messageList = await npcapi.getMessages(npc._id);
 
-      let messageList = await npcapi.getMessages(npc._id);
+        messageList.push({
+          npcId: npc._id,
+          role: "user",
+          content: `You got a message from ${message.author.username} saying "${message.content}", please respond`,
+        });
 
-      let response = await aiClient.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messageList,
-      });
+        let response = await aiClient.chat.completions.create({
+          model: "gpt-3.5-turbo",
+          messages: messageList,
+        });
 
-      let msg = response.choices[0].message;
-      npcapi.insertMessage(npc._id, "assistant", msg.content);
+        let msg = response.choices[0].message;
 
-      npcapi.webhookSend(npc._id, msg.content, message.channel);
+        npcapi.insertMessage(
+          npc._id,
+          "user",
+          `You got a message from ${message.author.username} saying "${message.content}", please respond`
+        );
+
+        npcapi.insertMessage(npc._id, "assistant", msg.content);
+        npcapi.webhookSend(npc._id, msg.content, message.channel);
+      } catch {
+        message.reply(
+          `Ah!! Sorry... We don't have enough money or a a bank account setup for the moment to use the AI Service. Please try later. `
+        );
+      }
     }
   }
 

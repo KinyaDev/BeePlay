@@ -21,6 +21,12 @@ BeePlay is a utility discord bot meant to help you customize and automatize your
 
   ![Characters Cmd Img 1](https://i.imgur.com/x1qCNgP.png)
 
+- `/update` allows you to update some details of your character such as icon, brackets and biography
+
+  ![](https://i.imgur.com/CcH3Djs.png)
+  ![](https://i.imgur.com/NBXFOmb.png)
+  ![](https://i.imgur.com/mhEKKyr.png)
+
 You can make speak your character in a text channel in the same manner as the Tupperbox bot, with the brackets you gave to your character. Send a message by replacing "text" of the brackets by any text to make speak your character through a fake user profile. For instance, if your character has `c!text` brackets, then send `c!Hello World`.
 
 ![Send Character](https://i.imgur.com/wPw2pZf.png)

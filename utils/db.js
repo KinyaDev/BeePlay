@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const env = require("./env");
 const { TextChannel } = require("discord.js");
 const client = new MongoClient(env.MONGO_STRING);
@@ -33,6 +33,18 @@ class CharacterManager {
 
   unregister(_id) {
     characters.deleteOne({ userId: this.userId, _id });
+  }
+
+  /**
+   *
+   * @param {ObjectId} _id
+   * @param {{icon?: string, brackets?: string, bio?:string}} params
+   */
+  async update(_id, params) {
+    return await characters.updateOne(
+      { userId: this.userId, _id },
+      { $set: params }
+    );
   }
   async get(_id) {
     return await characters.findOne({ userId: this.userId, _id });

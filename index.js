@@ -11,7 +11,9 @@ const {
 const { readdirSync } = require("fs");
 const path = require("path");
 const { TOKEN } = require("./utils/env");
-const db = require("./utils/db");
+const stripe = require("stripe").default;
+const express = require("express");
+const app = express();
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, "MessageContent", "GuildMessages"],
@@ -67,24 +69,6 @@ client.once(Events.ClientReady, async (readyClient) => {
       .then((g) => g.size)} guilds`,
   });
   reloadCommands(readyClient);
-});
-
-client.on("guildCreate", async (guild) => {
-  readyClient.user.setActivity({
-    type: ActivityType.Playing,
-    name: `Managing roleplay in ${await client.guilds
-      .fetch()
-      .then((g) => g.size)} guilds`,
-  });
-});
-
-client.on("guildDelete", async (guild) => {
-  readyClient.user.setActivity({
-    type: ActivityType.Playing,
-    name: `Managing roleplay in ${await client.guilds
-      .fetch()
-      .then((g) => g.size)} guilds`,
-  });
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -147,5 +131,37 @@ for (let event of eventsFiles) {
 
   client.on(eventName, req);
 }
+
+app.get("/", (req, res) => {
+  res.send();
+});
+
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  (request, response) => {
+    const sig = request.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    } catch (err) {
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    console.log(`Unhandled event type ${event.type}`);
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+    console.log(event);
+  }
+);
+
+app.listen(1026, () => {
+  console.log("Web app listening");
+});
 
 client.login(TOKEN);
