@@ -15,10 +15,10 @@ async function exec(interaction, { error, env, now, information, success }) {
   let npcapi = new NPCManager(interaction.guildId);
 
   let hasPremium = await premiumManager.hasPremium();
-
-  if (!hasPremium && interaction.user.id !== "505832674217295875")
+  //  && interaction.user.id !== "505832674217295875"
+  if (!hasPremium)
     return interaction.editReply(
-      error("This is a premium feature, please pay the subscription.")
+      error("This is a premium feature, please buy the subscription.")
     );
 
   let subcommand = interaction.options.getSubcommand();

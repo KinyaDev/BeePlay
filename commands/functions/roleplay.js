@@ -23,10 +23,10 @@ async function exec(interaction, { error, env, now, information, success }) {
 
     // Gets the channels IDs
     let channelIds = channels
-      ? [...channels.matchAll(/<#([0-9]{19})>/g)].map((d) => d[1])
+      ? [...channels.matchAll(/<#([0-9]{18,19})>/g)].map((d) => d[1])
       : [];
     let mainChannelId = channel
-      ? [...channel.matchAll(/<#([0-9]{19})>/g)].map((d) => d[1])
+      ? [...channel.matchAll(/<#([0-9]{18,19})>/g)].map((d) => d[1])
       : [];
 
     switch (sc) {

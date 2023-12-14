@@ -1,6 +1,7 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const env = require("./env");
 const { TextChannel } = require("discord.js");
+const dayjs = require("dayjs");
 const client = new MongoClient(env.MONGO_STRING);
 
 client.connect().then(() => {
@@ -12,7 +13,9 @@ let characters = db.collection("characters");
 let guilds = db.collection("guilds");
 let premium = db.collection("premium");
 let npcs = db.collection("npcs");
+let premiumRequest = db.collection("premium_requests");
 let npcmessages = db.collection("npc_messages");
+let events = db.collection("events");
 
 class CharacterManager {
   constructor(userId) {
@@ -173,12 +176,39 @@ class RoleplayManager {
 class PremiumManager {
   constructor(guildId) {
     this.guildId = guildId;
+
+    (async () => {
+      if ((await this.hasTrial()) && (await this.hasTrialEnded(Date.now()))) {
+        this.togglePremium();
+      }
+    })();
   }
 
-  togglePremium() {
-    if (this.get()) {
-      premium.deleteOne({ guildId: this.guildId });
-    } else premium.insertOne({ guildId: this.guildId });
+  async setTrial() {
+    if (await this.hasPremium()) return;
+
+    premium.insertOne({ guildId: this.guildId, trialDate: Date.now() });
+  }
+
+  async hasTrialEnded(date) {
+    let data = await this.get();
+    let trialDate = new Date(data.trialDate);
+    trialDate.setDate(trialDate.getDate() + 1);
+    return dayjs(date).isAfter(trialDate);
+  }
+
+  async hasTrial() {
+    let data = await this.get();
+    return new Object(data).hasOwnProperty("trialDate");
+  }
+
+  async setPremium() {
+    if (await this.hasPremium()) return;
+    premium.insertOne({ guildId: this.guildId });
+  }
+
+  async removePremium() {
+    premium.deleteOne({ guildId: this.guildId });
   }
 
   async get() {
@@ -228,8 +258,8 @@ class NPCManager {
 
   async startNPC(_id, channelName) {
     let npcData = await this.get(_id);
-    let parsedSystem = `You are now an NPC in a roleplay discussion residing in ${channelName}. Movement is restricted to your current location.
-    Your name is ${npcData.name}. Here's your lore:\n${npcData.prompt}`;
+    let parsedSystem = `You are not an assistant anymore, you are playing a character in a roleplay discussion residing in ${channelName}. Movement is restricted to your current location.
+    Your name is ${npcData.name}. Here's your lore:\n${npcData.prompt}.`;
 
     npcmessages.insertOne({
       npcId: _id,
@@ -274,9 +304,131 @@ class NPCManager {
   }
 }
 
+class EventManager {
+  constructor(guildId) {
+    this.guildId = guildId;
+  }
+
+  async getEvents(filter) {
+    let obj = { guildId: this.guildId };
+
+    if (filter) Object.assign(obj, filter);
+    return await events.find(obj).toArray();
+  }
+
+  async roleMessage(roleId, channelId, inMessage, outMessage) {
+    let result = await events.insertOne({
+      guildId: this.guildId,
+      type: "rolemsg",
+      roleId,
+      channelId,
+      inMessage,
+      outMessage,
+    });
+
+    return result;
+  }
+
+  async deleteRoleMessage(_id) {
+    events.deleteOne({ _id });
+  }
+
+  async joinMessage(channelId, message) {
+    let result = await events.insertOne({
+      guildId: this.guildId,
+      type: "joinmsg",
+      channelId,
+      message,
+    });
+
+    return result;
+  }
+
+  async deleteJoinMessage(_id) {
+    events.deleteOne({ guildId: this.guildId, _id });
+  }
+
+  async leaveMessage(channelId, message) {
+    let result = await events.insertOne({
+      guildId: this.guildId,
+      type: "leavemsg",
+      channelId,
+      message,
+    });
+
+    return result;
+  }
+
+  async deleteLeaveMessage(_id) {
+    events.deleteOne({ guildId: this.guildId, _id });
+  }
+
+  async joinRole(roleId) {
+    let result = await events.insertOne({
+      guildId: this.guildId,
+      type: "joinrole",
+      roleId,
+    });
+
+    return result;
+  }
+
+  async joinBotRole(roleId) {
+    let result = await events.insertOne({
+      guildId: this.guildId,
+      type: "joinbotrole",
+      roleId,
+    });
+
+    return result;
+  }
+
+  async deleteJoinRole(_id) {
+    events.deleteOne({ guildId: this.guildId, _id });
+  }
+}
+
+class PremiumRequestManager {
+  constructor(guildId) {
+    this.guildId = guildId;
+  }
+
+  getRequest() {
+    return premiumRequest.findOne({ guildId: this.guildId });
+  }
+
+  static getRequest(code) {
+    return premiumRequest.findOne({ code });
+  }
+
+  async createRequest(code) {
+    let request = await this.getRequest();
+    if (request) return false;
+
+    premiumRequest.insertOne({ guildId: this.guildId, code });
+  }
+
+  static processPremium(code) {
+    return new Promise(async (resolve, reject) => {
+      let request = await this.getRequest(code);
+      if (request) {
+        let premiumApi = new PremiumManager(request.guildId);
+
+        if (await premiumApi.hasPremium()) return reject("already");
+
+        premiumApi.togglePremium();
+        resolve();
+      } else reject("invalid-code");
+    });
+  }
+}
+
 module.exports = {
   CharacterManager,
   RoleplayManager,
   PremiumManager,
   NPCManager,
+  EventManager,
+  PremiumManager,
+  PremiumRequestManager,
 };
