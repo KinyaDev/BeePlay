@@ -1,8 +1,8 @@
-# BeePlay - A Discord Bot Tailored for Classic Roleplay
+# Ideal Roleplay - A Discord Bot Tailored for Classic Roleplay
 
-## What is BeePlay?
+## What is Ideal Roleplay?
 
-BeePlay is a utility discord bot meant to help you customize and automatize your roleplay servers, it offers character management and fake user profiles, stats, species, travel system by setupping roleplay channels, and way more!
+Ideal Roleplay is a utility discord bot meant to help you customize and automatize your roleplay servers, it offers character management and fake user profiles, stats, species, travel system by setupping roleplay channels, and way more!
 
 ## Features
 
