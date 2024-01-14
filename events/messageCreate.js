@@ -3,41 +3,6 @@ const { CharacterManager, NPCManager, PremiumManager } = require("../utils/db");
 const { default: OpenAI } = require("openai");
 const env = require("../utils/env");
 
-const { createTunnel } = require("tunnel-ssh");
-
-const sshOptions = {
-  host: env.AI_HOST,
-  port: 22,
-  username: "tunnel_user",
-  password: env.AI_PWD,
-};
-
-function mySimpleTunnel(sshOptions, port, autoClose = true) {
-  let forwardOptions = {
-    srcAddr: "127.0.0.1",
-    srcPort: port,
-    dstAddr: "127.0.0.1",
-    dstPort: port,
-  };
-
-  let tunnelOptions = {
-    autoClose: autoClose,
-  };
-
-  let serverOptions = {
-    port: port,
-  };
-
-  return createTunnel(tunnelOptions, serverOptions, sshOptions, forwardOptions);
-}
-
-let tunnel = mySimpleTunnel(sshOptions, 4891);
-
-let aiClient = new OpenAI({
-  apiKey: env.OPENAI_TOKEN,
-  organization: env.OPENAI_ORGA,
-  baseURL: "http://localhost:4891/v1",
-});
 /**
  * @param {Message} message
  */
@@ -45,9 +10,16 @@ module.exports = async (message) => {
   if (message.channel.isDMBased()) return;
   if (message.author.id === message.client.user.id) return;
   let prapi = new PremiumManager(message.guildId);
-  if (!(await prapi.hasPremium())) return;
 
   async function respondNpc() {
+    if (!(await prapi.hasPremium())) return;
+
+    message.channel.sendTyping();
+    let aiClient = new OpenAI({
+      apiKey: env.OPENAI_TOKEN,
+      organization: env.OPENAI_ORGA,
+    });
+
     let npcapi = new NPCManager(message.guild.id);
     let npclist = await npcapi.list();
 
@@ -59,7 +31,7 @@ module.exports = async (message) => {
         try {
           let messageList = await npcapi.getMessages(npc._id);
 
-          let npcMsg = `${message.author.username}: "${message.content}". Say only "no-action" if ${message.author.username} isn't talking to you. Write directly your message without comments.`;
+          let npcMsg = `You hear ${message.author.username} saying "${message.content}"`;
           messageList.push({
             npcId: npc._id,
             role: "user",
@@ -73,9 +45,9 @@ module.exports = async (message) => {
           }
 
           let response = await aiClient.chat.completions.create({
-            model: "gpt4all-j-v1.3-groovy",
+            model: "gpt-3.5-turbo",
             messages: parsedMessages,
-            max_tokens: 50,
+            max_tokens: 200,
           });
 
           let msg = response.choices[0].message;
@@ -89,9 +61,7 @@ module.exports = async (message) => {
           npcapi.webhookSend(npc._id, msg.content, message.channel);
         } catch (e) {
           console.error(e);
-          message.reply(
-            `Ah!! Sorry... We don't have enough money or a a bank account setup for the moment to use the AI Service. Please try later. `
-          );
+          message.reply(`Sorry, we couldn't connect to the API`);
         }
       }
     }
@@ -117,7 +87,6 @@ module.exports = async (message) => {
       message.delete();
       charaManager.send(character._id, parsedMsg, message.channel);
 
-      message.channel.sendTyping();
       isTriggeredWebhook = true;
       isSimpleMessage = false;
     }

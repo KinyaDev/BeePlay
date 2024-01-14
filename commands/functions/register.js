@@ -68,6 +68,11 @@ async function exec(interaction, { error, env, now, information, success }) {
           },
         ],
         color: 0xffd966,
+        timestamp: Date.now(),
+        footer: {
+          text: "Ideal Roleplay",
+          iconURL: interaction.client.user.displayAvatarURL(),
+        },
       },
     ],
   });

@@ -43,4 +43,4 @@ module.exports = new SlashCommandBuilder()
           .setDescription("Get the list of NPCs in a channel")
       )
   )
-  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+  .setDefaultMemberPermissions("0");

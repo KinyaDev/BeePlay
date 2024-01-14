@@ -7,4 +7,5 @@ module.exports = new SlashCommandBuilder()
       .setName("type")
       .setDescription("Try the trial for one day!")
       .setChoices({ name: "trial", value: "trial" })
-  );
+  )
+  .setDefaultMemberPermissions("0");

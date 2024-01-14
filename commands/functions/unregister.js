@@ -20,11 +20,16 @@ async function exec(interaction, { error, env, now, information, success }) {
 
     charaapi.unregister(charaId);
 
-    interaction.editReply(
+    const message = await interaction.editReply(
       success(`${chara.name} has been successfully deleted!`)
     );
 
     interaction.editReply({ components: [] });
+    interaction.deleteReply();
+
+    setTimeout(() => {
+      message.delete();
+    }, 4000);
   } catch {
     interaction.editReply(error("Couldn't find any character..."));
   }

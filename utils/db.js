@@ -15,6 +15,7 @@ let premium = db.collection("premium");
 let npcs = db.collection("npcs");
 let premiumRequest = db.collection("premium_requests");
 let npcmessages = db.collection("npc_messages");
+let trials = db.collection("trials");
 let events = db.collection("events");
 
 class CharacterManager {
@@ -179,9 +180,15 @@ class PremiumManager {
 
     (async () => {
       if ((await this.hasTrial()) && (await this.hasTrialEnded(Date.now()))) {
-        this.togglePremium();
+        this.removePremium();
+        trials.insertOne({ guildId: this.guildId });
       }
     })();
+  }
+
+  async hasRegisteredEndedTrial() {
+    let data = await trials.findOne({ guildId: this.guildId });
+    return data;
   }
 
   async setTrial() {
@@ -258,8 +265,10 @@ class NPCManager {
 
   async startNPC(_id, channelName) {
     let npcData = await this.get(_id);
-    let parsedSystem = `You are not an assistant anymore, you are playing a character in a roleplay discussion residing in ${channelName}. Movement is restricted to your current location.
-    Your name is ${npcData.name}. Here's your lore:\n${npcData.prompt}.`;
+    let parsedSystem = `You play a character in roleplay called ${npcData.name}.
+    You reside in ${channelName} and movement is restricted to your current location.    
+    People can talk to you. Say "no-action" if people aren't talking to you, otherwise say your response directly.
+    Your lore or personnality is "${npcData.prompt}"`;
 
     npcmessages.insertOne({
       npcId: _id,
@@ -292,7 +301,7 @@ class NPCManager {
     let chara = await this.get(_id);
     if (!wh)
       wh = await channel.createWebhook({
-        name: "BeePlay Character",
+        name: "Ideal Roleplay Character",
         avatar: channel.client.user.displayAvatarURL(),
       });
 
@@ -416,7 +425,7 @@ class PremiumRequestManager {
 
         if (await premiumApi.hasPremium()) return reject("already");
 
-        premiumApi.togglePremium();
+        premiumApi.setPremium();
         resolve();
       } else reject("invalid-code");
     });

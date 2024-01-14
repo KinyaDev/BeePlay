@@ -2,23 +2,9 @@
 
 ## What is Ideal Roleplay?
 
-Ideal Roleplay is a utility discord bot meant to help you customize and automatize your roleplay servers, it offers character management and fake user profiles, stats, species, travel system by setupping roleplay channels, and way more!
+Ideal Roleplay is a utility Discord bot meant to help you customizing and automatizing your roleplay servers, it offers character management and fake user profiles, travel system by setupping roleplay channels, and way more!
 
 ## Features
-
-### Custom AI NPCs (PREMIUM)
-
-- `npc list` - get the list of all NPCs
-  ![](https://i.imgur.com/f0jntlT.png)
-
-- `npc create` creates a npc that will live in the specified
-  channel with a give name, avatar and prompt.
-
-![](https://i.imgur.com/kCHkkRI.png)
-
-- `npc delete`
-
-![](https://i.imgur.com/MsXavum.png)
 
 ### Character Management, Customization & Interaction
 
@@ -76,6 +62,8 @@ Establish roleplay channels and connect them with a travel system based on chann
 `/events join message delete` - selectmenu
 `/events leave message delete` - selectmenu
 `/events join role delete` - selectmenu
+
+### Special Events
 
 `/roleplay events travel message [#channel] [leave_message] [join_message]`
 `/roleplay events travel role [#channel] [#role] [remove_on_leave?]`

@@ -11,7 +11,7 @@ const { PremiumManager } = require("../../utils/db");
  * @param {ChatInputCommandInteraction} interaction
  */
 async function exec(interaction, { env, error, success }) {
-  let prapi = new PremiumManager(interaction.guildId);
+  let prapi = new PremiumManager(interaction.guild.id);
   let type = interaction.options.getString("type");
 
   if (type && type === "trial") {
@@ -22,6 +22,9 @@ async function exec(interaction, { env, error, success }) {
       return interaction.editReply(
         error("This server already have premium trial!")
       );
+
+    if (await prapi.hasRegisteredEndedTrial())
+      return interaction.editReply(error("Your trial already ended...."));
 
     prapi.setTrial();
     interaction.channel.send(`:tada: Premium trial started!`);
